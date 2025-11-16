@@ -21,6 +21,7 @@
     "@radix-ui/themes": "^3.0.0",
     "@react-three/drei": "^9.97.0",
     "@react-three/fiber": "^8.15.14",
+    "@react-three/postprocessing": "^2.15.2",
     "@splinetool/react-spline": "^4.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
