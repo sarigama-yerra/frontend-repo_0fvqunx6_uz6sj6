@@ -1,9 +1,9 @@
 import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react'
-import { Canvas, useFrame, extend, useThree } from '@react-three/fiber'
-import { OrbitControls, Environment, Html, Caustics, MeshTransmissionMaterial, Float, Instances, Instance, Lightformer, Sparkles, useDetectGPU, useTexture } from '@react-three/drei'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { OrbitControls, Environment, Html, Caustics, MeshTransmissionMaterial, Float, Sparkles, useDetectGPU } from '@react-three/drei'
 import * as THREE from 'three'
-import { EffectComposer, Bloom, DepthOfField, GodRays, Noise, Vignette, SMAA } from '@react-three/postprocessing'
-import { KernelSize, Resizer } from 'postprocessing'
+import { EffectComposer, Bloom, Noise, Vignette, SMAA } from '@react-three/postprocessing'
+import { KernelSize } from 'postprocessing'
 
 // Auto quality based on GPU
 function AutoQuality({ children }) {
@@ -18,7 +18,7 @@ function AutoQuality({ children }) {
 }
 
 function CameraRig() {
-  const { camera, mouse, viewport } = useThree()
+  const { camera, mouse } = useThree()
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
     const parallaxX = THREE.MathUtils.lerp(camera.position.x, mouse.x * 0.5, 0.05)
@@ -138,56 +138,7 @@ function OceanParticles() {
   )
 }
 
-function GodRaysLight() {
-  const light = useRef()
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    if (light.current) {
-      light.current.position.set(Math.sin(t*0.2)*3, 4, Math.cos(t*0.25)*-2)
-    }
-  })
-  return (
-    <mesh ref={light} position={[0,4,-2]}> 
-      <sphereGeometry args={[0.2, 16, 16]} />
-      <meshBasicMaterial color="#ffffff" />
-    </mesh>
-  )
-}
-
 function HolographicText({ text, position=[0,0,0] }) {
-  const material = useMemo(() => new THREE.ShaderMaterial({
-    uniforms: {
-      uTime: { value: 0 },
-      uColorA: { value: new THREE.Color('#9be7ff') },
-      uColorB: { value: new THREE.Color('#38bdf8') },
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main(){
-        vUv = uv;
-        vec3 p = position;
-        p.y += sin((position.x+position.y)*2.0 + float(gl_InstanceID)*0.1 + 0.0)*0.01;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime; 
-      uniform vec3 uColorA; 
-      uniform vec3 uColorB; 
-      varying vec2 vUv; 
-      void main(){
-        float glow = sin(vUv.y*10.0 + uTime*2.0)*0.15 + 0.35;
-        vec3 col = mix(uColorA, uColorB, vUv.y) + glow;
-        gl_FragColor = vec4(col, 0.85);
-      }
-    `,
-    transparent: true
-  }), [])
-
-  useFrame((_, dt) => {
-    material.uniforms.uTime.value += dt
-  })
-
   return (
     <Html position={position} center>
       <div style={{
@@ -210,11 +161,9 @@ function HolographicText({ text, position=[0,0,0] }) {
 function Bottle({ scrollRef }) {
   const group = useRef()
   const ripple = useRef(0)
-  const texNormal = useTexture('https://assets.geo.hcaptcha.com/c/2ddfd69/normal-water.jpg')
 
   // Create a premium bottle from glass with water inside (simplified parametric geometry)
   const glass = useMemo(() => {
-    const shape = new THREE.Shape()
     const points = [
       new THREE.Vector2(0.0, -1.8),
       new THREE.Vector2(0.7, -1.7),
@@ -247,7 +196,7 @@ function Bottle({ scrollRef }) {
     ripple.current = THREE.MathUtils.lerp(ripple.current, 0, 0.95)
   })
 
-  const onPointerMove = (e) => {
+  const onPointerMove = () => {
     ripple.current = 1.0
   }
 
@@ -294,14 +243,9 @@ function DepthSections() {
 }
 
 function EffectsLayer() {
-  const { scene, camera, gl, size } = useThree()
-  const lightRef = useRef()
   return (
-    <EffectComposer
-      multisampling={0}
-      autoClear={false}
-    >
-      <SMAA/>
+    <EffectComposer multisampling={0} autoClear={false}>
+      <SMAA />
       <Bloom intensity={0.6} luminanceThreshold={0.2} luminanceSmoothing={0.9} kernelSize={KernelSize.SMALL} />
       <Noise premultiply opacity={0.03} />
       <Vignette eskil offset={0.2} darkness={0.8} />
@@ -327,7 +271,7 @@ export default function UnderwaterScene() {
         <fog attach="fog" args={["#031a2a", 6, 25]} />
 
         <AutoQuality>
-          <Suspense fallback={<Html center>Loading ocean…</Html>}>
+          <Suspense fallback={<Html center><div style={{color:'#aee9ff'}}>Loading ocean…</div></Html>}>
             <ambientLight intensity={0.2} />
             <directionalLight position={[3,4,-2]} intensity={0.8} color="#aee9ff" />
             <Environment preset="sunset" background={false} />
@@ -340,7 +284,6 @@ export default function UnderwaterScene() {
             <Bottle scrollRef={scrollRef} />
             <DepthSections />
 
-            <GodRaysLight />
             <EffectsLayer />
           </Suspense>
         </AutoQuality>
