@@ -1,0 +1,37 @@
+
+> vibe-generated-app@1.0.0 dev
+> vite
+
+
+  VITE v5.4.20  ready in 229 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://172.20.37.151:3000/
+Error: The following dependencies are imported but could not be resolved:
+
+  @react-three/postprocessing (imported by /home/workspace/src/components/UnderwaterScene.jsx)
+
+Are they installed?
+    at file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:50669:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:50174:26
+12:21:42 AM [vite] Pre-transform error: Failed to resolve import "@react-three/postprocessing" from "src/components/UnderwaterScene.jsx". Does the file exist?
+12:21:58 AM [vite] Internal server error: Failed to resolve import "@react-three/postprocessing" from "src/components/UnderwaterScene.jsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/workspace/src/components/UnderwaterScene.jsx:5:84
+  4  |  import { OrbitControls, Environment, Html, Caustics, MeshTransmissionMaterial, Float, Instances, Instance, Lightformer, Sparkles, useDetectGPU, useTexture } from "@react-three/drei";
+  5  |  import * as THREE from "three";
+  6  |  import { EffectComposer, Bloom, DepthOfField, GodRays, Noise, Vignette, SMAA } from "@react-three/postprocessing";
+     |                                                                                       ^
+  7  |  import { KernelSize, Resizer } from "postprocessing";
+  8  |  function AutoQuality({ children }) {
+      at TransformPluginContext._formatError (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49258:41)
+      at TransformPluginContext.error (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49253:16)
+      at normalizeUrl (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64306:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64438:39
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:64365:7)
+      at async PluginContainer.transform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:49099:18)
+      at async loadAndTransform (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:51977:27)
+      at async viteTransformMiddleware (file:///home/workspace/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:62105:24)
